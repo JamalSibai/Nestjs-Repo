@@ -1,0 +1,25 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ReturnUser {
+  _id: String!
+  email: String!
+  password: String!
+  is_admin: Boolean!
+}
+
+type Query {
+  Hello: String!
+  User: [ReturnUser!]!
+}
+
+type Mutation {
+  createUser(input: UserInput!): ReturnUser!
+}
+
+input UserInput {
+  email: String!
+  password: String!
+  is_admin: Boolean!
+}
