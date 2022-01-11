@@ -34,9 +34,9 @@ export class UsersResolver {
     return await this.usersService.findAll();
   }
 
-  @Query(() => [ReturnUser])
   @Mutation(() => ReturnUser)
   async createUser(@Args('input') input: UserInput) {
+    console.log('input', input);
     return await this.usersService.createUser(input);
   }
 

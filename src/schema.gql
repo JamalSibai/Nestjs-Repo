@@ -7,21 +7,15 @@ type ReturnUser {
   email: String!
   password: String!
   is_admin: Boolean!
+  image: String!
 }
 
 type Query {
   Hello: String!
   findAllUsers: [ReturnUser!]!
   Users: [ReturnUser!]!
-  createUser(input: UserInput!): [ReturnUser!]!
   findOne(_id: String!): ReturnUser!
   CurrentUser: ReturnUser!
-}
-
-input UserInput {
-  email: String!
-  password: String!
-  is_admin: Boolean!
 }
 
 type Mutation {
@@ -30,6 +24,12 @@ type Mutation {
   UpdateUser(updateUser: UpdateUserInput!): ReturnUser!
   UpdateUserPass(newPass: String!, currPass: String!): ReturnUser!
   removeUser(_id: String!): ReturnUser!
+}
+
+input UserInput {
+  email: String!
+  password: String!
+  is_admin: Boolean!
 }
 
 input UpdateUserInput {

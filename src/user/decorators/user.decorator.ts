@@ -5,6 +5,7 @@ import { GraphQLError } from 'graphql';
 export const CurrentUser = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {
     console.log('in user decorator');
+    console.log(GqlExecutionContext.create(context).getContext().req);
     console.log(GqlExecutionContext.create(context).getContext().req.user);
 
     const { _id, email, is_admin } =

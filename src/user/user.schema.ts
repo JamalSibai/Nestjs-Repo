@@ -17,6 +17,9 @@ export class User {
 
   @Prop({ required: true })
   is_admin: boolean;
+
+  @Prop({ default: '0' })
+  image: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

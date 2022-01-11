@@ -10,4 +10,6 @@ export class ReturnUser {
   password: string;
   @Field()
   is_admin: boolean;
+  @Field()
+  image: string;
 }

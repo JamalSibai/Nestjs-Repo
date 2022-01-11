@@ -18,7 +18,7 @@ export class UsersService {
 
   async createUser(userInput: UserInput) {
     try {
-      console.log(userInput);
+      console.log('userInput', userInput);
       const isUser = await this.UserModel.findOne({
         email: userInput.email,
       });
