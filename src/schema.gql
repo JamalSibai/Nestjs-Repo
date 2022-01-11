@@ -11,15 +11,27 @@ type ReturnUser {
 
 type Query {
   Hello: String!
-  User: [ReturnUser!]!
-}
-
-type Mutation {
-  createUser(input: UserInput!): ReturnUser!
+  findAllUsers: [ReturnUser!]!
+  Users: [ReturnUser!]!
+  createUser(input: UserInput!): [ReturnUser!]!
+  findOne(_id: String!): ReturnUser!
+  CurrentUser: ReturnUser!
 }
 
 input UserInput {
   email: String!
   password: String!
+  is_admin: Boolean!
+}
+
+type Mutation {
+  createUser(input: UserInput!): ReturnUser!
+  login(password: String!, email: String!): String!
+  UpdateUser(updateUser: UpdateUserInput!): ReturnUser!
+  UpdateUserPass(newPass: String!, currPass: String!): ReturnUser!
+  removeUser(_id: String!): ReturnUser!
+}
+
+input UpdateUserInput {
   is_admin: Boolean!
 }
