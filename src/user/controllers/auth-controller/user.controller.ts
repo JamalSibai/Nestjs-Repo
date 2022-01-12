@@ -15,14 +15,14 @@ import {
 } from '@nestjs/common';
 
 import { FileInterceptor } from '@nestjs/platform-express';
-import { JwtAuthGuard } from './guards/api-key.guard';
-import { UserInput } from './inputs/create.input';
-import { UsersService } from './user.service';
+import { JwtAuthGuard } from '../../guards/api-key.guard';
+import { UserInput } from '../../inputs/create.input';
+import { UsersService } from '../../user.service';
 import { diskStorage } from 'multer';
 import path = require('path');
 import { v4 as uuidv4 } from 'uuid';
 
-import { AuthControllerUser } from './decorators/controller-user.decorator';
+import { AuthControllerUser } from '../../decorators/controller-user.decorator';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -30,7 +30,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ReturnUser } from './dto/create-user.dto';
+import { ReturnUser } from '../../dto/create-user.dto';
 
 // const getstream = require('into-stream');
 
@@ -47,7 +47,7 @@ export const storage = {
   }),
 };
 
-@ApiTags('User apis')
+@ApiTags('User Apis')
 @Controller('user')
 @UsePipes(
   new ValidationPipe({
@@ -62,18 +62,6 @@ export class UserController {
   @UseGuards(new JwtAuthGuard())
   async hello() {
     return 'hello';
-  }
-  @Post()
-  @ApiCreatedResponse({
-    description: 'Register',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'User Already exists',
-  })
-  @ApiBody({ type: UserInput })
-  @ApiBearerAuth()
-  async createUser(@Body() input: UserInput) {
-    return await this.usersService.createUser(input);
   }
 
   @Get(':imgpath')
@@ -92,7 +80,6 @@ export class UserController {
   @ApiUnauthorizedResponse({
     description: 'image is not of extension [jpg| jpeg |png|gif]',
   })
-  // @ApiBody({ type: ReturnUser }) --> body schema
   @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('file', storage))
   uploadFile(
