@@ -1,0 +1,10 @@
+nodejs videos check
+sql ex
+react new project check
+start reading the book
+firebase
+f93867ac884ef7460e188eb7220d0325
+https://api.themoviedb.org/3/movie/550?api_key=f93867ac884ef7460e188eb7220d0325
+eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmOTM4NjdhYzg4NGVmNzQ2MGUxODhlYjcyMjBkMDMyNSIsInN1YiI6IjYxYjllZTQzYzYxNmFjMDA2NjhiY2Q2NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.isczLP3fvi_qPuCAmk6Ir-OTLwcOJqp6W7Rc67ivSh4
+
+rfce => extension React Refactor extension ES7

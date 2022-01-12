@@ -34,4 +34,5 @@ input UserInput {
 
 input UpdateUserInput {
   is_admin: Boolean!
+  image: String!
 }

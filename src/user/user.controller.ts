@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -7,11 +8,12 @@ import {
   Request,
   Res,
   UploadedFile,
-  UploadedFiles,
   UseGuards,
   UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from './guards/api-key.guard';
 import { UserInput } from './inputs/create.input';
@@ -19,8 +21,18 @@ import { UsersService } from './user.service';
 import { diskStorage } from 'multer';
 import path = require('path');
 import { v4 as uuidv4 } from 'uuid';
-import { CurrentUser } from './decorators/user.decorator';
-import { Types } from 'mongoose';
+
+import { AuthControllerUser } from './decorators/controller-user.decorator';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { ReturnUser } from './dto/create-user.dto';
+
+// const getstream = require('into-stream');
 
 export const storage = {
   storage: diskStorage({
@@ -35,39 +47,70 @@ export const storage = {
   }),
 };
 
+@ApiTags('User apis')
 @Controller('user')
-// @UseGuards(AuthGuard())
+@UsePipes(
+  new ValidationPipe({
+    whitelist: true,
+    transform: true,
+  }),
+)
 export class UserController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('hello')
   @UseGuards(new JwtAuthGuard())
-  async hello(@CurrentUser() user: { _id: string; email: string }) {
-    console.log(user);
+  async hello() {
     return 'hello';
   }
   @Post()
-  @UseGuards(new JwtAuthGuard())
+  @ApiCreatedResponse({
+    description: 'Register',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'User Already exists',
+  })
+  @ApiBody({ type: UserInput })
+  @ApiBearerAuth()
   async createUser(@Body() input: UserInput) {
     return await this.usersService.createUser(input);
   }
 
   @Get(':imgpath')
+  @UseGuards(new JwtAuthGuard())
+  @ApiBearerAuth()
+  @ApiCreatedResponse({ description: 'get images ' })
   seeUploadedFile(@Param('imgpath') image, @Res() res) {
     return res.sendFile(image, { root: 'uploads/profileimages' });
   }
 
-  // @Post('upload')
-  // @UseGuards(new JwtAuthGuard())
-  // @UseInterceptors(FileInterceptor('file', storage))
-  // uploadFile(
-  //   @CurrentUser() user: { _id: Types.ObjectId; email: string },
-  //   @UploadedFile() file,
-  //   @Request() req,
-  // ) {
-  //   console.log('user');
-  //   console.log(user);
-  //   return this.usersService.updateUser(user._id, { image: file.filename });
-  //   // return { filename: file.filename };
-  // }
+  @Post('upload')
+  @UseGuards(new JwtAuthGuard())
+  @ApiCreatedResponse({
+    description: 'upload images of extension [jpg| jpeg |png|gif]',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'image is not of extension [jpg| jpeg |png|gif]',
+  })
+  // @ApiBody({ type: ReturnUser }) --> body schema
+  @ApiBearerAuth()
+  @UseInterceptors(FileInterceptor('file', storage))
+  uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Request() req,
+    @AuthControllerUser() user: any,
+  ) {
+    if (!file || !file.originalname.match(/\.(jpg| jpeg |png|gif)$/)) {
+      throw new BadRequestException(
+        'invalid file provided, [image files allowed]',
+      );
+    }
+
+    //to upload the file/image with a stream of data
+    // const buffer = file.buffer;
+
+    return this.usersService.updateUser(req.user._id, {
+      image: `${file.filename}`,
+    });
+  }
 }

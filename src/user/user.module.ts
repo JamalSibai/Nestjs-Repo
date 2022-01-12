@@ -6,14 +6,10 @@ import { UserController } from './user.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersResolver } from './user.resolver';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { MulterModule } from '@nestjs/platform-express';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
-    MulterModule.register({
-      dest: './uploads',
-    }),
     JwtModule.register({
       secret: 'hard!to-guess_secret',
       signOptions: {

@@ -1,13 +1,16 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { Prop } from '@nestjs/mongoose';
+
 import { IsOptional, IsNotEmpty } from 'class-validator';
 
 @InputType()
 export class UpdateUserInput {
-  @IsOptional()
   @Field()
+  @IsOptional()
+  @IsNotEmpty()
   is_admin?: boolean;
-  // @IsOptional()
-  // @Field()
-  // image?: string;
+
+  @Field()
+  @IsOptional()
+  @IsNotEmpty()
+  image?: string;
 }
