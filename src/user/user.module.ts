@@ -12,15 +12,15 @@ import { AuthControllerController } from './controllers/auth-controller/auth-con
 @Module({
   imports: [
     JwtModule.register({
-      secret: process.env.SECRET,
+      secret: 'hard!to-guess_secret',
 
       signOptions: {
-        expiresIn: process.env.SECRET,
+        expiresIn: '24h',
       },
     }),
     PassportModule.register({
-      secret: process.env.SECRET,
-      signOptions: { expiresIn: process.env.SECRET },
+      secret: 'hard!to-guess_secret',
+      signOptions: { expiresIn: '24h' },
     }),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
