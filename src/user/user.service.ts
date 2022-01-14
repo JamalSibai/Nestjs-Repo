@@ -8,6 +8,7 @@ import { GraphQLError } from 'graphql';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserInput } from './inputs/update.input';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +16,11 @@ export class UsersService {
     private readonly jwtService: JwtService,
     @InjectModel(User.name) private UserModel: Model<UserDocument>,
   ) {}
+
+  @Cron('* * * 17 * *')
+  handleCron() {
+    console.log('Task Scheduled');
+  }
 
   async createUser(userInput: UserInput) {
     try {

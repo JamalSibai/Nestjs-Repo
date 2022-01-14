@@ -9,11 +9,12 @@ import { join } from 'path/posix';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpErrorFilter } from './shared/http-error.filter';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     UserModule,
-
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),

@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
   Param,
   Post,
   Request,
@@ -13,41 +14,23 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../../guards/api-key.guard';
-import { UserInput } from '../../inputs/create.input';
 import { UsersService } from '../../user.service';
-import { diskStorage } from 'multer';
-import path = require('path');
-import { v4 as uuidv4 } from 'uuid';
 
 import { AuthControllerUser } from '../../decorators/controller-user.decorator';
 import {
   ApiBearerAuth,
-  ApiBody,
   ApiCreatedResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ReturnUser } from '../../dto/create-user.dto';
-
-// const getstream = require('into-stream');
-
-export const storage = {
-  storage: diskStorage({
-    destination: './uploads/profileimages',
-    filename: (req, file, cb) => {
-      const filename: string =
-        path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
-      const extension: string = path.parse(file.originalname).ext;
-
-      cb(null, `${filename}${extension}`);
-    },
-  }),
-};
+import { SentryInterceptor } from 'src/user/interceptors/sentry.interceptor';
+import * as Sentry from '@sentry/node';
+import { ImageUploader } from 'src/helpers/image.helper';
 
 @ApiTags('User Apis')
+@UseInterceptors(SentryInterceptor)
 @Controller('user')
 @UsePipes(
   new ValidationPipe({
@@ -61,6 +44,8 @@ export class UserController {
   @Post('hello')
   @UseGuards(new JwtAuthGuard())
   async hello() {
+    // Sentry.captureException('hello');
+    // throw new InternalServerErrorException();
     return 'hello';
   }
 
@@ -82,21 +67,16 @@ export class UserController {
     description: 'image is not of extension [jpg| jpeg |png|gif]',
   })
   @ApiBearerAuth()
-  @UseInterceptors(FileInterceptor('file', storage))
-  uploadFile(
+  @UseInterceptors(FileInterceptor('file', ImageUploader))
+  async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Request() req,
     @AuthControllerUser() user: any,
   ) {
-    if (!file || !file.originalname.match(/\.(jpg| jpeg |png|gif)$/)) {
-      throw new BadRequestException(
-        'invalid file provided, [image files allowed]',
-      );
+    console.log(file);
+    if (!file) {
+      throw new BadRequestException('wrong file extension ');
     }
-
-    //to upload the file/image with a stream of data
-    // const buffer = file.buffer;
-
     return this.usersService.updateUser(req.user._id, {
       image: `${file.filename}`,
     });
