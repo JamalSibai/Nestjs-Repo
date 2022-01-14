@@ -57,7 +57,6 @@ export class UserController {
     return res.sendFile(image, { root: 'uploads/profileimages' });
   }
 
-  // PROBLEM the image is being uploaded in both conditions
   @Post('upload')
   @UseGuards(new JwtAuthGuard())
   @ApiCreatedResponse({
